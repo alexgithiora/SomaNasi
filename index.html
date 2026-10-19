@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Rive Instructional Design</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: #ffffff;
+      overflow: hidden;
+    }
+    /* Canvas fills the whole window, so its width/height ratio = window ratio */
+    canvas {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+
+  <script src="https://unpkg.com/@rive-app/webgl2"></script>
+</head>
+
+<body>
+  <canvas id="rive-canvas"></canvas>
+
+  <script>
+  const canvas = document.getElementById('rive-canvas');
+
+  const r = new rive.Rive({
+    src: 'instructional_design.riv',
+    canvas: canvas,
+    autoplay: true,
+    autoBind: true,
+    artboard: 'Main',               // see the note below
+    stateMachines: 'State Machine 1',
+    layout: new rive.Layout({
+      fit: rive.Fit.Contain,
+      alignment: rive.Alignment.TopLeft,
+    }),
+    onLoad: () => {
+      console.log('view model props:', r.viewModelInstance?.properties);
+      syncSize();
+    },
+  });
+
+  function syncSize() {
+    r.resizeDrawingSurfaceToCanvas();
+    const vmi = r.viewModelInstance;
+    if (!vmi) { console.warn('No view model instance bound'); return; }
+
+    vmi.number('width').value  = canvas.clientWidth;
+    vmi.number('height').value = canvas.clientHeight;
+  }
+
+  new ResizeObserver(syncSize).observe(canvas);
+</script>
